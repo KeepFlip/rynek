@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "rynek",
+  "version": "${version}",
+  "name": "Rynek",
+  "description": "Automatyczne wystawianie diamentowych zbroi komenda /wystaw",
+  "environment": "client",
+  "entrypoints": { "client": ["pl.rynek.RynekMod"] },
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "minecraft": "~1.21.4",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}
