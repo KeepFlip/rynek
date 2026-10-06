@@ -107,7 +107,9 @@ public class RynekMod implements ClientModInitializer {
     }
 
     private static boolean hasAnyPiece(MinecraftClient mc) {
-        for (Piece p : PIECES) if (findSlot(mc, p.item()) >= 0) return true;
+        for (Piece p : PIECES) {
+            if (findSlot(mc, p.item()) >= 0) return true;
+        }
         return false;
     }
 
@@ -118,4 +120,11 @@ public class RynekMod implements ClientModInitializer {
         var unb = reg.getOrThrow(Enchantments.UNBREAKING);
         for (int i = 0; i < 36; i++) {
             ItemStack s = mc.player.getInventory().getStack(i);
-            if (s.isOf(item)
+            if (!s.isOf(item)) continue;
+            if (EnchantmentHelper.getLevel(prot, s) != 4) continue;
+            if (EnchantmentHelper.getLevel(unb, s) != 3) continue;
+            return i;
+        }
+        return -1;
+    }
+}
