@@ -23,6 +23,8 @@ import java.util.List;
 public class RynekMod implements ClientModInitializer {
 
     private static final int DELAY_TICKS = 40;
+    private static final int JUMP_INTERVAL_TICKS = 3 * 60 * 20; // co 3 minuty
+    private static final int JUMPS_PER_BURST = 3;
 
     private record Piece(Item item, int price) {}
 
@@ -37,6 +39,11 @@ public class RynekMod implements ClientModInitializer {
     private static int pointer = 0;
     private static int cooldown = 0;
 
+    private static int jumpTimer = 0;
+    private static int jumpsLeft = 0;
+    private static int jumpWait = 0;
+    private static boolean jumpHeld = false;
+
     @Override
     public void onInitializeClient() {
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
@@ -47,9 +54,12 @@ public class RynekMod implements ClientModInitializer {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             if (!running) return;
             if (client.player == null || client.world == null || client.getNetworkHandler() == null) {
-                running = false;
+                haltAll(client);
                 return;
             }
+
+            jumpTick(client);
+
             if (cooldown > 0) {
                 cooldown--;
                 return;
@@ -67,14 +77,55 @@ public class RynekMod implements ClientModInitializer {
         running = true;
         pointer = 0;
         cooldown = 0;
+        jumpTimer = JUMP_INTERVAL_TICKS;
+        jumpsLeft = 0;
+        jumpWait = 0;
+        jumpHeld = false;
         ctx.getSource().sendFeedback(Text.literal("§a[Rynek] Start. Wylacz: /rynek-stop"));
         return 1;
     }
 
     private static int stop(CommandContext<FabricClientCommandSource> ctx) {
-        running = false;
+        haltAll(MinecraftClient.getInstance());
         ctx.getSource().sendFeedback(Text.literal("§e[Rynek] Stop."));
         return 1;
+    }
+
+    private static void haltAll(MinecraftClient mc) {
+        running = false;
+        jumpsLeft = 0;
+        jumpHeld = false;
+        if (mc != null && mc.options != null) {
+            mc.options.jumpKey.setPressed(false);
+        }
+    }
+
+    /** Co 3 minuty: 3 skoki pod rzad. */
+    private static void jumpTick(MinecraftClient mc) {
+        if (jumpHeld) {
+            mc.options.jumpKey.setPressed(false);
+            jumpHeld = false;
+            jumpWait = 8;
+            return;
+        }
+        if (jumpWait > 0) {
+            jumpWait--;
+            return;
+        }
+        if (jumpsLeft == 0) {
+            if (jumpTimer > 0) {
+                jumpTimer--;
+            } else {
+                jumpsLeft = JUMPS_PER_BURST;
+                jumpTimer = JUMP_INTERVAL_TICKS;
+            }
+            return;
+        }
+        if (mc.currentScreen == null && mc.player.isOnGround()) {
+            mc.options.jumpKey.setPressed(true);
+            jumpHeld = true;
+            jumpsLeft--;
+        }
     }
 
     private static void step(MinecraftClient mc) {
@@ -91,7 +142,7 @@ public class RynekMod implements ClientModInitializer {
             cooldown = DELAY_TICKS;
             return;
         }
-        running = false;
+        haltAll(mc);
         mc.player.sendMessage(Text.literal("§e[Rynek] Brak zbroi w eq - zatrzymano."), false);
     }
 
