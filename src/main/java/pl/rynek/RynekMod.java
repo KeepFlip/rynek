@@ -29,10 +29,10 @@ public class RynekMod implements ClientModInitializer {
     private record Piece(Item item, int price) {}
 
     private static final List<Piece> PIECES = List.of(
-            new Piece(Items.DIAMOND_HELMET, 399),
-            new Piece(Items.DIAMOND_CHESTPLATE, 349),
-            new Piece(Items.DIAMOND_LEGGINGS, 349),
-            new Piece(Items.DIAMOND_BOOTS, 349)
+            new Piece(Items.DIAMOND_HELMET, 700),
+            new Piece(Items.DIAMOND_CHESTPLATE, 700),
+            new Piece(Items.DIAMOND_LEGGINGS, 700),
+            new Piece(Items.DIAMOND_BOOTS, 700)
     );
 
     private static boolean running = false;
