@@ -38,11 +38,11 @@ public class RynekMod implements ClientModInitializer {
 
     // KOLEJNOSC: helm -> klata -> spodnie -> buty -> miecz
     private static final List<Piece> PIECES = List.of(
-            armor(Items.NETHERITE_HELMET, 19999),
-            armor(Items.NETHERITE_CHESTPLATE, 14999),
-            armor(Items.NETHERITE_LEGGINGS, 12999),
-            armor(Items.NETHERITE_BOOTS, 14999),
-            new Piece(Items.NETHERITE_SWORD, 23999, Enchantments.SHARPNESS, 6, Enchantments.FIRE_ASPECT, 2)
+            armor(Items.NETHERITE_HELMET, 18999),
+            armor(Items.NETHERITE_CHESTPLATE, 13499),
+            armor(Items.NETHERITE_LEGGINGS, 12400),
+            armor(Items.NETHERITE_BOOTS, 11999),
+            new Piece(Items.NETHERITE_SWORD, 20699, Enchantments.SHARPNESS, 6, Enchantments.FIRE_ASPECT, 2)
     );
 
     private static boolean running = false;
